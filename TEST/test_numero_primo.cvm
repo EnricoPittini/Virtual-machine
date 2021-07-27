@@ -1,0 +1,82 @@
+; Programma che prende in input un numero n, salvato
+; nel registro R0 e verifica se è primo
+;
+; Il risultato è contenuto nel registro R30,
+; (1 = è primo, 0 = non è primo)
+;
+; Caso di test: n(R0) = 7, ans(R30) = 1
+68 ; Dimensione del programma
+;Main:
+12 ; [0] MOV R0, 8   (n = 7)
+0  ; [1]
+2972 ; [2]
+20 ; [3] CALL 8
+8  ; [4]
+1  ; [5] DISPLAY R30
+30 ; [6]
+0  ; [7] HALT
+;Isprime:
+12 ; [8]  MOV R1 2
+1  ; [9]
+2  ; [10]
+31 ; [11] SUB R0 R1 (n - 2)
+0  ; [12]
+1  ; [13]
+25 ; [14]  JNEG 64   (if (n - 2) < 0) == if (n <= 1) goto return 0
+64 ; [15]
+12 ; [16] MOV R20 2 (divisore = 2)
+20 ; [17]
+2  ; [18]
+12 ; [19] MOV R30 1 (trovato = 1)
+30 ; [20]
+1  ; [21]
+;Init While:
+31 ; [22] SUB R0 R20 (n - div)
+0  ; [23]
+20 ; [24]
+23 ; [25] JZ 67      (if (div == n)) goto return risposta
+67 ; [26]
+31 ; [27] SUB R0 R20 (n - div)
+0  ; [28]
+20 ; [29]
+25 ; [30] JNEG 67    (if (div > n)) goto return risposta
+67; [31]
+10 ; [32] PUSH R30
+30 ; [33]
+23 ; [34] JZ 67      (if (trovato = 0)) goto return risposta
+67 ; [35]
+;Init If:
+33 ; [36] DIV R0 R20 (n / divisore)
+0  ; [37]
+20 ; [38]
+11 ; [39] POP R4
+4  ; [40]
+32 ; [41] MUL R4 R20
+4  ; [42]
+20 ; [43]
+11 ; [44] POP R5
+5  ; [45]
+31 ; [46] SUB R0 R5  (n - (n / divisore)) == (n % divisore)
+0  ; [47]
+5  ; [48]
+24 ; [49] JPOS 54 if (n % div != 0) goto exit if
+54 ; [50]
+12 ; [51] MOV R30 0  (risposta = 0)
+30 ; [52]
+0  ; [53]
+;Exit if:
+12 ; [54] MOV R2 1
+2  ; [55]
+1  ; [56]
+30 ; [57] ADD R20 R2 (div + 1)
+20 ; [58]
+2  ; [59]
+11 ; [60] POP R20    (div = div + 1)
+20 ; [61]
+22 ; [62] JMP 22     (goto Init While)
+22 ; [63]
+;Exit while:
+12 ; [64] MOV R30 0  (return 0)
+30 ; [65]
+0  ; [66]
+21 ; [67] RET
